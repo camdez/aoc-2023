@@ -3,14 +3,14 @@
             [clojure.string :as str]))
 
 (defn parse-game [ln]
-  (let [[_ id moves-str] (re-find #"Game (\d+): (.*)" ln)]
-    [id
-     (for [move-str (str/split moves-str #"; ")]
-       (->> (str/split move-str #", ")
-            (map #(let [[count color] (str/split % #" ")]
-                    [(keyword color)
-                     (parse-long count)]))
-            (into {})))]))
+  (let [[_ id moves-str] (re-matches #"Game (\d+): (.*)" ln)
+        moves (for [move-str (str/split moves-str #"; ")]
+                (->> (str/split move-str #", ")
+                     (map (fn [color-str]
+                            (let [[cnt color] (str/split color-str #" ")]
+                              [(keyword color) (parse-long cnt)])))
+                     (into {})))]
+    [id moves]))
 
 (defn move-possible? [move bag-cnts]
   (every? (fn [color]
