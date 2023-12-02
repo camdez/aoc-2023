@@ -1,5 +1,5 @@
 (ns aoc-2023.day2
-  (:require [clojure.java.io :as io]
+  (:require [aoc-2023.utils :as utils]
             [clojure.string :as str]))
 
 (defn parse-game [ln]
@@ -14,18 +14,15 @@
 
 (defn move-possible? [move bag-cnts]
   (every? (fn [color]
-            (>= (get bag-cnts color 0)
-                (get move color 0)))
+            (>= (bag-cnts color 0)
+                (move color 0)))
           (keys move)))
 
 (defn game-possible? [[_id moves] bag-cnts]
   (every? #(move-possible? % bag-cnts) moves))
 
 (defn part1 []
-  (->> "2/input.txt"
-       io/resource
-       io/reader
-       line-seq
+  (->> (utils/aoc-input-lines 2)
        (map parse-game)
        (filter #(game-possible? % {:red 12, :green 13, :blue 14}))
        (map (comp parse-long first))
@@ -40,9 +37,6 @@
   (reduce * (vals cube-cnts)))
 
 (defn part2 []
-  (->> "2/input.txt"
-       io/resource
-       io/reader
-       line-seq
+  (->> (utils/aoc-input-lines 2)
        (map (comp cube-power min-cubes-needed parse-game))
        (reduce +)))
