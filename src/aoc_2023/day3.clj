@@ -92,11 +92,9 @@
 (defn- gears-and-parts [grid]
   (->> (digit-runs grid)
        (mapcat (fn [run]
-                 (let [part-num (run-part-num run)]
-                   (->> run
-                        (run-neighbor-locs grid)
-                        (filter (comp #{\*} :ch))
-                        (map (juxt :coords (constantly part-num)))))))
+                 (->> (run-neighbor-locs grid run)
+                      (filter (comp #{\*} :ch))
+                      (map (juxt :coords (constantly (run-part-num run)))))))
        (reduce (fn [m [star-coords part-num]]
                  (update m star-coords conj part-num))
                {})
