@@ -1,5 +1,7 @@
 # Advent of Code 2023
 
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/camdez/aoc-2023/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/camdez/aoc-2023/tree/master)
+
 ## Introduction
 
 Solutions in Clojure.
