@@ -1,6 +1,7 @@
 (ns aoc-2023.day1
-  (:require [clojure.java.io :as io]
-            [clojure.string :as str]))
+  (:require
+   [aoc-2023.utils :as utils]
+   [clojure.string :as str]))
 
 (defn- calibration-val [ln digit-fn]
   (->> ln
@@ -9,16 +10,14 @@
        (apply str)
        parse-long))
 
-(defn- file-sum [file-name digit-fn]
-  (->> file-name
-       io/resource
-       io/reader
-       line-seq
+(defn- calibration-sum [digit-fn lns]
+  (->> lns
        (map #(calibration-val % digit-fn))
        (reduce +)))
 
 (defn part1 []
-  (file-sum "1/input.txt" (partial re-seq #"\d")))
+  (->> (utils/aoc-input-lines 1)
+       (calibration-sum (partial re-seq #"\d"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -51,4 +50,5 @@
        (map #(spelled-digits % %))))
 
 (defn part2 []
-  (file-sum "1/input.txt" flex-digits))
+  (->> (utils/aoc-input-lines 1)
+       (calibration-sum flex-digits)))
