@@ -21,23 +21,17 @@
   (pile-worth (utils/aoc-input-lines 4)))
 
 (defn cards-won [lines]
-  (let [idx-wins (mapv line-wins lines)
-        init-cnt (count idx-wins)]
-    (loop [held-idxs (range init-cnt)
-           card-cnt  init-cnt]
-      (let [idxs+wins (->> held-idxs
-                           (keep (fn [idx]
-                                   (let [wins (nth idx-wins idx)]
-                                     (when (pos? wins)
-                                       [idx wins])))))
-            card-cnt  (+ card-cnt (reduce + (map second idxs+wins)))
-            new-idxs  (->> idxs+wins
-                           (mapcat (fn [[idx wins]]
-                                     (let [nidx (inc idx)]
-                                       (range nidx (+ wins nidx))))))]
-        (if (seq new-idxs)
-          (recur new-idxs card-cnt)
-          card-cnt)))))
+  (let [cards-wins (mapv line-wins lines)]
+    (->> (range (dec (count cards-wins)) -1 -1)
+         (reduce (fn [cards-adds idx]
+                   (let [nidx (inc idx)]
+                     (->> (range nidx (+ nidx (nth cards-wins idx)))
+                          (map cards-adds)
+                          (reduce + 1)
+                          (assoc cards-adds idx))))
+                 {})
+         (vals)
+         (reduce +))))
 
 (defn part2 []
   (cards-won (utils/aoc-input-lines 4)))
