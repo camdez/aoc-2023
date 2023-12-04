@@ -6,6 +6,4 @@
 (deftest answers
   (is (= 21568 (sut/part1)))
   (is (= 30 (sut/cards-won (utils/aoc-input-lines 4 "sample2"))))
-  ;; Slow:
-  ;;(is (= 11827296 (sut/part2)))
-  )
+  (is (= 11827296 (sut/part2))))

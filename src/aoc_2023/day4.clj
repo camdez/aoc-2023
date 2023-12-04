@@ -7,20 +7,15 @@
 (defn- line-wins [line]
   (->> (str/split line #"(:| \|) +")
        (drop 1)
-       (mapv #(set (map parse-long (str/split % #" +"))))
+       (map #(into #{} (map parse-long) (str/split % #" +")))
        (apply set/intersection)
        count))
 
 (defn- line-points [line]
-  (->> (line-wins line)
-       dec
-       (math/pow 2)
-       int))
+  (->> (line-wins line) dec (math/pow 2) int))
 
 (defn pile-worth [lines]
-  (->> lines
-       (map line-points)
-       (reduce +)))
+  (->> lines (map line-points) (reduce +)))
 
 (defn part1 []
   (pile-worth (utils/aoc-input-lines 4)))
@@ -30,16 +25,16 @@
         idx-wins  (memoize (comp line-wins idx-cards))]
     (loop [held-idxs (keys idx-cards)
            card-cnt  (count held-idxs)]
-      (let [idxs+pts (->> held-idxs
-                          (keep (fn [idx]
-                                  (let [points (idx-wins idx)]
-                                    (when (pos? points)
-                                      [idx points])))))
-            card-cnt (+ card-cnt (reduce + (map second idxs+pts)))
-            new-idxs (->> idxs+pts
-                          (mapcat (fn [[idx points]]
-                                    (range (inc idx)
-                                           (+ points (inc idx))))))]
+      (let [idxs+wins (->> held-idxs
+                           (keep (fn [idx]
+                                   (let [wins (idx-wins idx)]
+                                     (when (pos? wins)
+                                       [idx wins])))))
+            card-cnt  (+ card-cnt (reduce + (map second idxs+wins)))
+            new-idxs  (->> idxs+wins
+                           (mapcat (fn [[idx wins]]
+                                     (let [nidx (inc idx)]
+                                       (range nidx (+ wins nidx))))))]
         (if (seq new-idxs)
           (recur new-idxs card-cnt)
           card-cnt)))))
